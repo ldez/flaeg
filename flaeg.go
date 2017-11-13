@@ -22,7 +22,7 @@ var ErrParserNotFound = errors.New("Parser not found or custom parser missing")
 
 // GetTypesRecursive links in flagmap a flag with its reflect.StructField
 // You can whether provide objValue on a structure or a pointer to structure as first argument
-// Flags are genereted from field name or from StructTag
+// Flags are generated from field name or from StructTag
 func getTypesRecursive(objValue reflect.Value, flagmap map[string]reflect.StructField, key string) error {
 	name := key
 	switch objValue.Kind() {
@@ -93,7 +93,7 @@ func GetBoolFlags(config interface{}) ([]string, error) {
 	return flags, nil
 }
 
-//GetFlags returns flags
+// GetFlags returns flags
 func GetFlags(config interface{}) ([]string, error) {
 	flagmap := make(map[string]reflect.StructField)
 	if err := getTypesRecursive(reflect.ValueOf(config), flagmap, ""); err != nil {
@@ -106,7 +106,7 @@ func GetFlags(config interface{}) ([]string, error) {
 	return flags, nil
 }
 
-//loadParsers loads default parsers and custom parsers given as parameter. Return a map [reflect.Type]parsers
+// loadParsers loads default parsers and custom parsers given as parameter. Return a map [reflect.Type]parsers
 // bool, int, int64, uint, uint64, float64,
 func loadParsers(customParsers map[reflect.Type]Parser) (map[reflect.Type]Parser, error) {
 	parsers := map[reflect.Type]Parser{}
@@ -147,13 +147,13 @@ func loadParsers(customParsers map[reflect.Type]Parser) (map[reflect.Type]Parser
 	return parsers, nil
 }
 
-//ParseArgs : parses args return valmap map[flag]Getter, using parsers map[type]Getter
-//args must be formated as like as flag documentation. See https://golang.org/pkg/flag
+// ParseArgs : parses args return valmap map[flag]Getter, using parsers map[type]Getter
+// args must be formated as like as flag documentation. See https://golang.org/pkg/flag
 func parseArgs(args []string, flagmap map[string]reflect.StructField, parsers map[reflect.Type]Parser) (map[string]Parser, error) {
 	//Return var
 	valmap := make(map[string]Parser)
 	//Visitor in flag.Parse
-	flagList := []*flag.Flag{}
+	var flagList []*flag.Flag
 	visitor := func(fl *flag.Flag) {
 		flagList = append(flagList, fl)
 	}
@@ -166,16 +166,16 @@ func parseArgs(args []string, flagmap map[string]reflect.StructField, parsers ma
 		//for _, flag := range flags {
 		//structField := flagmap[flag]
 		if parser, ok := parsers[structField.Type]; ok {
-			newparserValue := reflect.New(reflect.TypeOf(parser).Elem())
-			newparserValue.Elem().Set(reflect.ValueOf(parser).Elem())
-			newparser := newparserValue.Interface().(Parser)
+			newParserValue := reflect.New(reflect.TypeOf(parser).Elem())
+			newParserValue.Elem().Set(reflect.ValueOf(parser).Elem())
+			newParser := newParserValue.Interface().(Parser)
 			if short := structField.Tag.Get("short"); len(short) == 1 {
 				// fmt.Printf("short : %s long : %s\n", short, flag)
-				flagSet.VarP(newparser, flag, short, structField.Tag.Get("description"))
+				flagSet.VarP(newParser, flag, short, structField.Tag.Get("description"))
 			} else {
-				flagSet.Var(newparser, flag, structField.Tag.Get("description"))
+				flagSet.Var(newParser, flag, structField.Tag.Get("description"))
 			}
-			newParsers[flag] = newparser
+			newParsers[flag] = newParser
 		} else {
 			err = ErrParserNotFound
 		}
@@ -522,7 +522,7 @@ Flags:
 
 func printFlagsDescriptionsDefaultValues(flagmap map[string]reflect.StructField, defaultValmap map[string]reflect.Value, parsers map[reflect.Type]Parser, output io.Writer) error {
 	// Sort alphabetically & Delete unparsable flags in a slice
-	flags := []string{}
+	var flags []string
 	for flag, field := range flagmap {
 		if _, ok := parsers[field.Type]; ok {
 			flags = append(flags, flag)
@@ -531,10 +531,10 @@ func printFlagsDescriptionsDefaultValues(flagmap map[string]reflect.StructField,
 	sort.Strings(flags)
 
 	// Process data
-	descriptions := []string{}
-	defaultValues := []string{}
-	flagsWithDashs := []string{}
-	shortFlagsWithDash := []string{}
+	var descriptions []string
+	var defaultValues []string
+	var flagsWithDashs []string
+	var shortFlagsWithDash []string
 	for _, flag := range flags {
 		field := flagmap[flag]
 		if short := field.Tag.Get("short"); len(short) == 1 {

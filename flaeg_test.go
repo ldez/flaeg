@@ -11,8 +11,8 @@ import (
 	"time"
 )
 
-//Configuration is a struct which contains all differents type to field
-//using parsers on string, time.Duration, pointer, bool, int, int64, time.Time, float64
+// Configuration is a struct which contains all different type to field
+// using parsers on string, time.Duration, pointer, bool, int, int64, time.Time, float64
 type Configuration struct {
 	Name     string        //no description struct tag, it will not be flaged
 	LogLevel string        `short:"l" description:"Log level"`      //string type field, short flag "-l"
@@ -23,32 +23,32 @@ type Configuration struct {
 }
 
 type ServerInfo struct {
-	Watch  bool   `description:"Watch device"`      //bool type
-	IP     string `description:"Server ip address"` //string type field
-	Load   int    `description:"Server load"`       //int type field
-	Load64 int64  `description:"Server load"`       //int64 type field, same description just to be sure it works
+	Watch  bool   `description:"Watch device"`      // bool type
+	IP     string `description:"Server ip address"` // string type field
+	Load   int    `description:"Server load"`       // int type field
+	Load64 int64  `description:"Server load"`       // int64 type field, same description just to be sure it works
 }
 type DatabaseInfo struct {
-	ServerInfo             //Go throught annonymous field
-	ConnectionMax   uint   `long:"comax" description:"Number max of connections on database"` //uint type field, long flag "--comax"
-	ConnectionMax64 uint64 `description:"Number max of connections on database"`              //uint64 type field, same description just to be sure it works
+	ServerInfo             //Go thought anonymous field
+	ConnectionMax   uint   `long:"comax" description:"Number max of connections on database"` // uint type field, long flag "--comax"
+	ConnectionMax64 uint64 `description:"Number max of connections on database"`              // uint64 type field, same description just to be sure it works
 }
 type OwnerInfo struct {
-	Name        *string      `description:"Owner name"`                     //pointer type field on string
-	DateOfBirth time.Time    `long:"dob" description:"Owner date of birth"` //time.Time type field, long flag "--dob"
-	Rate        float64      `description:"Owner rate"`                     //float64 type field
-	Servers     []ServerInfo `description:"Owner Server"`                   //slice of ServerInfo type field, need a custom parser
+	Name        *string      `description:"Owner name"`                     // pointer type field on string
+	DateOfBirth time.Time    `long:"dob" description:"Owner date of birth"` // time.Time type field, long flag "--dob"
+	Rate        float64      `description:"Owner rate"`                     // float64 type field
+	Servers     []ServerInfo `description:"Owner Server"`                   // slice of ServerInfo type field, need a custom parser
 }
 
-//newDefaultConfiguration returns a pointer on Configuration with default values
+// newDefaultConfiguration returns a pointer on Configuration with default values
 func newDefaultPointersConfiguration() *Configuration {
 	var db DatabaseInfo
 	db.Watch = true
 	db.IP = "192.168.1.2"
 	db.Load = 32
 	db.Load64 = 64
-	db.ConnectionMax = 3200000000            //max 4294967295
-	db.ConnectionMax64 = 6400000000000000000 //max 18446744073709551615
+	db.ConnectionMax = 3200000000            // max 4294967295
+	db.ConnectionMax64 = 6400000000000000000 // max 18446744073709551615
 
 	var own OwnerInfo
 	str := "DefaultOwnerNamePointer"
@@ -56,9 +56,9 @@ func newDefaultPointersConfiguration() *Configuration {
 	own.DateOfBirth, _ = time.Parse(time.RFC3339, "1979-05-27T07:32:00Z")
 	own.Rate = 0.111
 	own.Servers = []ServerInfo{
-		ServerInfo{IP: "192.168.1.2"},
-		ServerInfo{IP: "192.168.1.3"},
-		ServerInfo{IP: "192.168.1.4"},
+		{IP: "192.168.1.2"},
+		{IP: "192.168.1.3"},
+		{IP: "192.168.1.4"},
 	}
 	return &Configuration{
 		Db:    &db,
@@ -66,7 +66,7 @@ func newDefaultPointersConfiguration() *Configuration {
 	}
 }
 
-//newConfiguration returns a pointer on Configuration initialized
+// newConfiguration returns a pointer on Configuration initialized
 func newConfiguration() *Configuration {
 	var own OwnerInfo
 	str := "InitOwnerNamePointer"
@@ -757,7 +757,7 @@ func TestGetDefaultValueInitConfigAllDefault(t *testing.T) {
 		"db.load64":          reflect.ValueOf(int64(64)),
 		"db.comax":           reflect.ValueOf(uint(3200000000)),
 		"db.connectionmax64": reflect.ValueOf(uint64(6400000000000000000)),
-		"owner":              reflect.ValueOf(&OwnerInfo{Name: nil, DateOfBirth: checkDefaultDob, Rate: 0.111, Servers: []ServerInfo{ServerInfo{Watch: false, IP: "192.168.1.2", Load: 0, Load64: 0}, ServerInfo{Watch: false, IP: "192.168.1.3", Load: 0, Load64: 0}, ServerInfo{Watch: false, IP: "192.168.1.4", Load: 0, Load64: 0}}}),
+		"owner":              reflect.ValueOf(&OwnerInfo{Name: nil, DateOfBirth: checkDefaultDob, Rate: 0.111, Servers: []ServerInfo{{Watch: false, IP: "192.168.1.2", Load: 0, Load64: 0}, {Watch: false, IP: "192.168.1.3", Load: 0, Load64: 0}, {Watch: false, IP: "192.168.1.4", Load: 0, Load64: 0}}}),
 		"owner.name":         reflect.ValueOf(&checkDefaultStr),
 		"owner.dob":          reflect.ValueOf(checkDob),
 		"owner.rate":         reflect.ValueOf(float64(0.999)),
@@ -815,7 +815,7 @@ func TestGetDefaultValueNoConfigNoDefault(t *testing.T) {
 	}
 }
 
-//Test getDefaultValue on a full complex struct, with annonymous field, nil pointers and not initialized fields
+// TestGetDefaultValueInitConfigNoDefault on a full complex struct, with annonymous field, nil pointers and not initialized fields
 func TestGetDefaultValueInitConfigNoDefault(t *testing.T) {
 	config := &Configuration{
 		Name: "defaultName", //useless field not flaged
@@ -859,7 +859,7 @@ func TestGetDefaultValueInitConfigNoDefault(t *testing.T) {
 	}
 }
 
-//Test getDefaultValue on a empty config but with default values on pointers
+// TestGetDefaultNoConfigAllDefault on a empty config but with default values on pointers
 func TestGetDefaultNoConfigAllDefault(t *testing.T) {
 	config := &Configuration{}
 	defPointerConfig := newDefaultPointersConfiguration()
@@ -880,11 +880,11 @@ func TestGetDefaultNoConfigAllDefault(t *testing.T) {
 		"db.load64":          reflect.ValueOf(int64(64)),
 		"db.comax":           reflect.ValueOf(uint(3200000000)),
 		"db.connectionmax64": reflect.ValueOf(uint64(6400000000000000000)),
-		"owner":              reflect.ValueOf(&OwnerInfo{Name: nil, DateOfBirth: checkDob, Rate: 0.111, Servers: []ServerInfo{ServerInfo{Watch: false, IP: "192.168.1.2", Load: 0, Load64: 0}, ServerInfo{Watch: false, IP: "192.168.1.3", Load: 0, Load64: 0}, ServerInfo{Watch: false, IP: "192.168.1.4", Load: 0, Load64: 0}}}),
+		"owner":              reflect.ValueOf(&OwnerInfo{Name: nil, DateOfBirth: checkDob, Rate: 0.111, Servers: []ServerInfo{{Watch: false, IP: "192.168.1.2", Load: 0, Load64: 0}, {Watch: false, IP: "192.168.1.3", Load: 0, Load64: 0}, {Watch: false, IP: "192.168.1.4", Load: 0, Load64: 0}}}),
 		"owner.name":         reflect.ValueOf(&checkStr),
 		"owner.dob":          reflect.ValueOf(checkDob),
 		"owner.rate":         reflect.ValueOf(float64(0.111)),
-		"owner.servers":      reflect.ValueOf([]ServerInfo{ServerInfo{Watch: false, IP: "192.168.1.2", Load: 0, Load64: 0}, ServerInfo{Watch: false, IP: "192.168.1.3", Load: 0, Load64: 0}, ServerInfo{Watch: false, IP: "192.168.1.4", Load: 0, Load64: 0}}),
+		"owner.servers":      reflect.ValueOf([]ServerInfo{{Watch: false, IP: "192.168.1.2", Load: 0, Load64: 0}, {Watch: false, IP: "192.168.1.3", Load: 0, Load64: 0}, {Watch: false, IP: "192.168.1.4", Load: 0, Load64: 0}}),
 	}
 
 	for flag, val := range defaultValmap {
@@ -1062,7 +1062,7 @@ func TestFillStructRecursiveNoConfigNoDefaultAllValmap(t *testing.T) {
 			Name:        new(string),
 			DateOfBirth: checkDob,
 			Rate:        float64(0.222),
-			Servers:     []ServerInfo{ServerInfo{IP: "1.0.0.1"}},
+			Servers:     []ServerInfo{{IP: "1.0.0.1"}},
 		},
 	}
 
@@ -1114,11 +1114,11 @@ func TestFillStructRecursiveNoConfigAllDefaultNoValmap(t *testing.T) {
 		"db.load64":          reflect.ValueOf(int64(64)),
 		"db.comax":           reflect.ValueOf(uint(3200000000)),
 		"db.connectionmax64": reflect.ValueOf(uint64(6400000000000000000)),
-		"owner":              reflect.ValueOf(&OwnerInfo{Name: nil, DateOfBirth: defaultDob, Rate: 0.111, Servers: []ServerInfo{ServerInfo{Watch: false, IP: "192.168.1.2", Load: 0, Load64: 0}, ServerInfo{Watch: false, IP: "192.168.1.3", Load: 0, Load64: 0}, ServerInfo{Watch: false, IP: "192.168.1.4", Load: 0, Load64: 0}}}),
+		"owner":              reflect.ValueOf(&OwnerInfo{Name: nil, DateOfBirth: defaultDob, Rate: 0.111, Servers: []ServerInfo{{Watch: false, IP: "192.168.1.2", Load: 0, Load64: 0}, {Watch: false, IP: "192.168.1.3", Load: 0, Load64: 0}, {Watch: false, IP: "192.168.1.4", Load: 0, Load64: 0}}}),
 		"owner.name":         reflect.ValueOf(&defaultStr),
 		"owner.dob":          reflect.ValueOf(defaultDob),
 		"owner.rate":         reflect.ValueOf(float64(0.111)),
-		"owner.servers":      reflect.ValueOf([]ServerInfo{ServerInfo{Watch: false, IP: "192.168.1.2", Load: 0, Load64: 0}, ServerInfo{Watch: false, IP: "192.168.1.3", Load: 0, Load64: 0}, ServerInfo{Watch: false, IP: "192.168.1.4", Load: 0, Load64: 0}}),
+		"owner.servers":      reflect.ValueOf([]ServerInfo{{Watch: false, IP: "192.168.1.2", Load: 0, Load64: 0}, {Watch: false, IP: "192.168.1.3", Load: 0, Load64: 0}, {Watch: false, IP: "192.168.1.4", Load: 0, Load64: 0}}),
 	}
 	//test
 	if err := fillStructRecursive(reflect.ValueOf(config), defaultValmap, valmap, ""); err != nil {
@@ -1177,7 +1177,7 @@ func TestFillStructRecursiveInitConfigAllDefaultNoValmap(t *testing.T) {
 		"db.load64":          reflect.ValueOf(int64(64)),
 		"db.comax":           reflect.ValueOf(uint(3200000000)),
 		"db.connectionmax64": reflect.ValueOf(uint64(6400000000000000000)),
-		"owner":              reflect.ValueOf(&OwnerInfo{Name: nil, DateOfBirth: checkDefaultDob, Rate: 0.111, Servers: []ServerInfo{ServerInfo{Watch: false, IP: "192.168.1.2", Load: 0, Load64: 0}, ServerInfo{Watch: false, IP: "192.168.1.3", Load: 0, Load64: 0}, ServerInfo{Watch: false, IP: "192.168.1.4", Load: 0, Load64: 0}}}),
+		"owner":              reflect.ValueOf(&OwnerInfo{Name: nil, DateOfBirth: checkDefaultDob, Rate: 0.111, Servers: []ServerInfo{{Watch: false, IP: "192.168.1.2", Load: 0, Load64: 0}, {Watch: false, IP: "192.168.1.3", Load: 0, Load64: 0}, {Watch: false, IP: "192.168.1.4", Load: 0, Load64: 0}}}),
 		"owner.name":         reflect.ValueOf(&checkDefaultStr),
 		"owner.dob":          reflect.ValueOf(checkDob),
 		"owner.rate":         reflect.ValueOf(float64(0.999)),
@@ -1248,7 +1248,7 @@ func TestFillStructRecursiveInitConfigAllDefaultPointerValmap(t *testing.T) {
 		"db.load64":          reflect.ValueOf(int64(64)),
 		"db.comax":           reflect.ValueOf(uint(3200000000)),
 		"db.connectionmax64": reflect.ValueOf(uint64(6400000000000000000)),
-		"owner":              reflect.ValueOf(&OwnerInfo{Name: nil, DateOfBirth: checkDefaultDob, Rate: 0.111, Servers: []ServerInfo{ServerInfo{Watch: false, IP: "192.168.1.2", Load: 0, Load64: 0}, ServerInfo{Watch: false, IP: "192.168.1.3", Load: 0, Load64: 0}, ServerInfo{Watch: false, IP: "192.168.1.4", Load: 0, Load64: 0}}}),
+		"owner":              reflect.ValueOf(&OwnerInfo{Name: nil, DateOfBirth: checkDefaultDob, Rate: 0.111, Servers: []ServerInfo{{Watch: false, IP: "192.168.1.2", Load: 0, Load64: 0}, {Watch: false, IP: "192.168.1.3", Load: 0, Load64: 0}, {Watch: false, IP: "192.168.1.4", Load: 0, Load64: 0}}}),
 		"owner.name":         reflect.ValueOf(&checkDefaultStr),
 		"owner.dob":          reflect.ValueOf(checkDob),
 		"owner.rate":         reflect.ValueOf(float64(0.999)),
@@ -1335,7 +1335,7 @@ func TestFillStructRecursiveInitConfigAllDefaultPointerUnderPointerValmap(t *tes
 		"db.load64":          reflect.ValueOf(int64(64)),
 		"db.comax":           reflect.ValueOf(uint(3200000000)),
 		"db.connectionmax64": reflect.ValueOf(uint64(6400000000000000000)),
-		"owner":              reflect.ValueOf(&OwnerInfo{Name: nil, DateOfBirth: checkDefaultDob, Rate: 0.111, Servers: []ServerInfo{ServerInfo{Watch: false, IP: "192.168.1.2", Load: 0, Load64: 0}, ServerInfo{Watch: false, IP: "192.168.1.3", Load: 0, Load64: 0}, ServerInfo{Watch: false, IP: "192.168.1.4", Load: 0, Load64: 0}}}),
+		"owner":              reflect.ValueOf(&OwnerInfo{Name: nil, DateOfBirth: checkDefaultDob, Rate: 0.111, Servers: []ServerInfo{{Watch: false, IP: "192.168.1.2", Load: 0, Load64: 0}, {Watch: false, IP: "192.168.1.3", Load: 0, Load64: 0}, {Watch: false, IP: "192.168.1.4", Load: 0, Load64: 0}}}),
 		"owner.name":         reflect.ValueOf(&checkDefaultStr),
 		"owner.dob":          reflect.ValueOf(checkDob),
 		"owner.rate":         reflect.ValueOf(float64(0.999)),
@@ -1417,11 +1417,11 @@ func TestFillStructRecursiveNoConfigAllDefaultSomeValmap(t *testing.T) {
 		"db.load64":          reflect.ValueOf(int64(64)),
 		"db.comax":           reflect.ValueOf(uint(3200000000)),
 		"db.connectionmax64": reflect.ValueOf(uint64(6400000000000000000)),
-		"owner":              reflect.ValueOf(&OwnerInfo{Name: nil, DateOfBirth: defaultDob, Rate: 0.111, Servers: []ServerInfo{ServerInfo{Watch: false, IP: "192.168.1.2", Load: 0, Load64: 0}, ServerInfo{Watch: false, IP: "192.168.1.3", Load: 0, Load64: 0}, ServerInfo{Watch: false, IP: "192.168.1.4", Load: 0, Load64: 0}}}),
+		"owner":              reflect.ValueOf(&OwnerInfo{Name: nil, DateOfBirth: defaultDob, Rate: 0.111, Servers: []ServerInfo{{Watch: false, IP: "192.168.1.2", Load: 0, Load64: 0}, {Watch: false, IP: "192.168.1.3", Load: 0, Load64: 0}, {Watch: false, IP: "192.168.1.4", Load: 0, Load64: 0}}}),
 		"owner.name":         reflect.ValueOf(&defaultStr),
 		"owner.dob":          reflect.ValueOf(defaultDob),
 		"owner.rate":         reflect.ValueOf(float64(0.111)),
-		"owner.servers":      reflect.ValueOf([]ServerInfo{ServerInfo{Watch: false, IP: "192.168.1.2", Load: 0, Load64: 0}, ServerInfo{Watch: false, IP: "192.168.1.3", Load: 0, Load64: 0}, ServerInfo{Watch: false, IP: "192.168.1.4", Load: 0, Load64: 0}}),
+		"owner.servers":      reflect.ValueOf([]ServerInfo{{Watch: false, IP: "192.168.1.2", Load: 0, Load64: 0}, {Watch: false, IP: "192.168.1.3", Load: 0, Load64: 0}, {Watch: false, IP: "192.168.1.4", Load: 0, Load64: 0}}),
 	}
 	//test
 	if err := fillStructRecursive(reflect.ValueOf(config), defaultValmap, valmap, ""); err != nil {
@@ -1487,7 +1487,7 @@ func TestLoadWithParsersInitConfigAllDefaultNoFlag(t *testing.T) {
 		reflect.TypeOf([]ServerInfo{}): &sliceServerValue{},
 	}
 	//init args
-	args := []string{}
+	var args []string
 
 	//TEST
 	if err := LoadWithParsers(config, defaultPointers, args, customParsers); err != nil {
@@ -1560,7 +1560,7 @@ func TestLoadWithParsersInitConfigNoDefaultAllFlag(t *testing.T) {
 			Name:        new(string),
 			DateOfBirth: checkDob,
 			Rate:        float64(0.222),
-			Servers:     []ServerInfo{ServerInfo{IP: "1.0.0.1"}},
+			Servers:     []ServerInfo{{IP: "1.0.0.1"}},
 		},
 	}
 
@@ -1829,7 +1829,7 @@ func TestPrintErrorInvalidArgument(t *testing.T) {
 		"db.load64":          reflect.ValueOf(int64(64)),
 		"db.comax":           reflect.ValueOf(uint(3200000000)),
 		"db.connectionmax64": reflect.ValueOf(uint64(6400000000000000000)),
-		"owner":              reflect.ValueOf(&OwnerInfo{Name: &checkDefaultStr, DateOfBirth: checkDefaultDob, Rate: 0.111, Servers: []ServerInfo{ServerInfo{Watch: false, IP: "192.168.1.2", Load: 0, Load64: 0}, ServerInfo{Watch: false, IP: "192.168.1.3", Load: 0, Load64: 0}, ServerInfo{Watch: false, IP: "192.168.1.4", Load: 0, Load64: 0}}}),
+		"owner":              reflect.ValueOf(&OwnerInfo{Name: &checkDefaultStr, DateOfBirth: checkDefaultDob, Rate: 0.111, Servers: []ServerInfo{{Watch: false, IP: "192.168.1.2", Load: 0, Load64: 0}, {Watch: false, IP: "192.168.1.3", Load: 0, Load64: 0}, {Watch: false, IP: "192.168.1.4", Load: 0, Load64: 0}}}),
 		"owner.name":         reflect.ValueOf(&checkDefaultStr),
 		"owner.dob":          reflect.ValueOf(checkDob),
 		"owner.rate":         reflect.ValueOf(float64(0.999)),
@@ -2674,20 +2674,20 @@ func TestArgsToLower(t *testing.T) {
 
 func TestSplitArgs(t *testing.T) {
 	inSlice := [][]string{
-		[]string{""},
-		[]string{"-a"},
-		[]string{"--arg=toto", "-atata"},
-		[]string{"cmd"},
-		[]string{"cmd", "-a"},
-		[]string{"cmd", "--arg=toto", "-atata"},
+		{""},
+		{"-a"},
+		{"--arg=toto", "-atata"},
+		{"cmd"},
+		{"cmd", "-a"},
+		{"cmd", "--arg=toto", "-atata"},
 	}
 	checkSlice := [][]string{
-		[]string{"", ""},
-		[]string{"", "-a"},
-		[]string{"", "--arg=toto", "-atata"},
-		[]string{"cmd"},
-		[]string{"cmd", "-a"},
-		[]string{"cmd", "--arg=toto", "-atata"},
+		{"", ""},
+		{"", "-a"},
+		{"", "--arg=toto", "-atata"},
+		{"cmd"},
+		{"cmd", "-a"},
+		{"cmd", "--arg=toto", "-atata"},
 	}
 	for i, in := range inSlice {
 		cmd, args := splitArgs(in)
