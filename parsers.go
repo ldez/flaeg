@@ -177,6 +177,23 @@ func (d *Duration) UnmarshalText(text []byte) error {
 	return d.Set(string(text))
 }
 
+// -- time.Duration Value
+type durationValue time.Duration
+
+func (d *durationValue) Set(s string) error {
+	v, err := time.ParseDuration(s)
+	*d = durationValue(v)
+	return err
+}
+
+func (d *durationValue) Get() interface{} { return time.Duration(*d) }
+
+func (d *durationValue) String() string { return (*time.Duration)(d).String() }
+
+func (d *durationValue) SetValue(val interface{}) {
+	*d = durationValue(val.(time.Duration))
+}
+
 // -- time.Time Value
 type timeValue time.Time
 

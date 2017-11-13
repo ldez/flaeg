@@ -132,8 +132,11 @@ func loadParsers(customParsers map[reflect.Type]Parser) (map[reflect.Type]Parser
 	var float64Parser float64Value
 	parsers[reflect.TypeOf(float64(1.5))] = &float64Parser
 
-	var durationParser Duration
-	parsers[reflect.TypeOf(Duration(time.Second))] = &durationParser
+	var durationParser durationValue
+	parsers[reflect.TypeOf(time.Second)] = &durationParser
+
+	var customDurationParser Duration
+	parsers[reflect.TypeOf(Duration(time.Second))] = &customDurationParser
 
 	var timeParser timeValue
 	parsers[reflect.TypeOf(time.Now())] = &timeParser
