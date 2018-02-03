@@ -360,11 +360,13 @@ func PrintHelp(flagMap map[string]reflect.StructField, defaultValmap map[string]
 func PrintError(err error, flagMap map[string]reflect.StructField, defaultValmap map[string]reflect.Value, parsers map[reflect.Type]parse.Parser) error {
 	if err != flag.ErrHelp {
 		fmt.Printf("Error: %s\n", err)
+
+		if !strings.Contains(err.Error(), ":No parser for type") {
+			PrintHelp(flagMap, defaultValmap, parsers)
+		}
+		return err
 	}
-	if !strings.Contains(err.Error(), ":No parser for type") {
-		PrintHelp(flagMap, defaultValmap, parsers)
-	}
-	return err
+	return nil
 }
 
 // LoadWithParsers initializes config : struct fields given by reference, with args : arguments.
@@ -447,12 +449,12 @@ Use "{{.ProgName}} [command] --help" for more information about a command.
 Flags:
 `
 	// Use a struct to give data to template
-	type TempStruct struct {
+	tempStruct := struct {
 		ProgName        string
 		ProgDescription string
 		SubCommands     map[string]string
-	}
-	tempStruct := TempStruct{}
+	}{}
+
 	if cmd != nil {
 		tempStruct.ProgName = cmd.Name
 		tempStruct.ProgDescription = cmd.Description
@@ -630,7 +632,8 @@ func (f *Flaeg) Parse(cmd *Command) (*Command, error) {
 		f.commandArgs = f.args
 	}
 
-	if err := LoadWithCommand(cmd, f.commandArgs, f.customParsers, f.commands); err != nil {
+	err := LoadWithCommand(cmd, f.commandArgs, f.customParsers, f.commands)
+	if err != flag.ErrHelp {
 		return cmd, err
 	}
 	return cmd, nil
