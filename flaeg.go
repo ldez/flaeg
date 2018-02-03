@@ -620,7 +620,10 @@ func (f *Flaeg) Run() error {
 	}
 
 	if _, err := f.Parse(f.calledCommand); err != nil {
-		return err
+		if err != flag.ErrHelp {
+			return err
+		}
+		return nil
 	}
 	return f.calledCommand.Run()
 }
@@ -633,10 +636,7 @@ func (f *Flaeg) Parse(cmd *Command) (*Command, error) {
 	}
 
 	err := LoadWithCommand(cmd, f.commandArgs, f.customParsers, f.commands)
-	if err != flag.ErrHelp {
-		return cmd, err
-	}
-	return cmd, nil
+	return cmd, err
 }
 
 // splitArgs takes args (type []string) and return command ("" if rootCommand) and command's args
