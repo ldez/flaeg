@@ -25,8 +25,7 @@ We developed `flaeg` and [`staert`](https://github.com/containous/staert) in ord
 	- type `int` (`int32`, `int64`, `uint`, `uint64`)
 	- type `string`
 	- type `float` (`float64`)
-	- type `time.Duration`
-    	- type `time.Time`
+	- type `time.Time`
 - Many `Kind` of `StructField` in the Configuration structure are supported :
 	- Sub-Structure
 	- Anonymous field (on Sub-Structure)
@@ -60,11 +59,11 @@ Like this:
 
 ```go
 // Configuration is a struct which contains all differents type to field
-// using parsers on string, time.Duration, pointer, bool, int, int64, time.Time, float64
+// using parsers on string, pointer, bool, int, int64, time.Time, float64
 type Configuration struct {
 	Name     string        // no description struct tag, it will not be flaged
 	LogLevel string        `short:"l" description:"Log level"`      // string type field, short flag "-l"
-	Timeout  time.Duration `description:"Timeout duration"`         // time.Duration type field
+	Timeout  parse.Duration `description:"Timeout duration"`         // parse.Duration type field
 	Db       *DatabaseInfo `description:"Enable database"`          // pointer type field (on DatabaseInfo)
 	Owner    *OwnerInfo    `description:"Enable Owner description"` // another pointer type field (on OwnerInfo)
 }
@@ -208,6 +207,28 @@ Let's run fleag now:
 		t.Errorf("Error %s", err.Error())
 	}
 }
+```
+
+### Duration Parser
+
+There is a built in duration parser to assist with the parsing of durations. Values such as "1s", "3m", "3h2m1s" are converted into a string indicating the number of seconds, you can then convert this string to a `time.Duration` if needed, as shown in the example below.
+
+A `parse.Duration` can be defined like this:
+
+```
+import (
+	"github.com/containous/flaeg/parse"
+)
+
+type Configuration struct {
+	Timeout  parse.Duration `description:"Timeout duration"`  // parse.Duration type field
+}
+```
+
+And then converted to a `time.Duration`:
+
+```
+duration := time.Duration(configuration.Timeout)
 ```
 
 ### Custom Parsers
